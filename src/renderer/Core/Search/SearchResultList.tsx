@@ -39,7 +39,7 @@ export const SearchResultList = ({
                 gap: 5,
             }}
         >
-            {searchResultItems.map((searchResultItem) => (
+            {searchResultItems.map((searchResultItem, idx) => (
                 <SearchResultListItem
                     containerRef={containerRef}
                     key={searchResultItem.id}
@@ -50,6 +50,7 @@ export const SearchResultList = ({
                     scrollBehavior={scrollBehavior}
                     layout={layout}
                     dragAndDropEnabled={dragAndDropEnabled}
+                    sort={idx}
                 />
             ))}
         </div>

@@ -49,7 +49,6 @@ export const App = () => {
             window.ContextBridge.ipcRenderer.off("settingUpdated[general.language]", changeLanguageEventHandler);
         };
     }, []);
-
     return (
         <FluentProvider theme={fluentUiTheme} style={appCssProperties}>
             <Routes>

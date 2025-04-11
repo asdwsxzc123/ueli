@@ -4,10 +4,12 @@ import type { SearchEngineId } from "@common/Core/Search";
 import { useRef, useState } from "react";
 import { getActions, getNextSearchResultItemId, getPreviousSearchResultItemId } from "./Helpers";
 import { getSearchResult } from "./Helpers/getSearchResult";
+import { useStateRef } from "@Core/Hooks/useStateRef";
 
 type ViewModel = {
     searchTerm: string;
     selectedItemId: string;
+    /** all Searched items */
     searchResult: Record<string, SearchResultItem[]>;
 };
 
@@ -39,7 +41,7 @@ export const useSearchViewController = ({
         searchTerm: "",
         selectedItemId: "",
     });
-
+    const selectedItemIdRef = useStateRef(viewModel.selectedItemId)
     const keyboardShortcuts: Record<OperatingSystem, Record<"addToFavorites" | "excludeFromSearchResults", string>> = {
         Linux: {
             addToFavorites: "Ctrl+F",
@@ -61,8 +63,9 @@ export const useSearchViewController = ({
 
     const setSelectedItemId = (selectedItemId: string) => setViewModel({ ...viewModel, selectedItemId });
 
-    const setSearchResult = (searchResult: Record<string, SearchResultItem[]>) =>
-        setViewModel({ ...viewModel, searchResult });
+    const setSearchResult = (searchResult: Record<string, SearchResultItem[]>) => {
+        return setViewModel({ ...viewModel, searchResult });
+    }
 
     const selectNextSearchResultItem = () =>
         setSelectedItemId(
@@ -74,11 +77,31 @@ export const useSearchViewController = ({
             getPreviousSearchResultItemId(viewModel.selectedItemId, collectSearchResultItems(viewModel.searchResult)),
         );
 
-    const getSelectedSearchResultItem = (): SearchResultItem | undefined =>
-        collectSearchResultItems(viewModel.searchResult).find((s) => s.id === viewModel.selectedItemId);
 
-    const getSelectedSearchResultItemActions = (): SearchResultItemAction[] => {
-        const selectedSearchResultItem = getSelectedSearchResultItem();
+    /**
+     *
+     * @param sort starting from 1
+     * @returns
+     */
+    const selectSortSearchResultItem = (sort: number) => {
+        const id = collectSearchResultItems(viewModel.searchResult)[sort - 1]?.id ?? viewModel.selectedItemId
+        setSelectedItemId(
+            id,
+        );
+        return id
+    }
+
+    const getSelectedSearchResultItem = (id?: string): SearchResultItem | undefined => {
+        if (id) {
+            return collectSearchResultItems(viewModel.searchResult).find((s) => s.id === id);
+        } else {
+            return collectSearchResultItems(viewModel.searchResult).find((s) => s.id === selectedItemIdRef.current)
+        }
+    };
+
+    const getSelectedSearchResultItemActions = (id?: string): SearchResultItemAction[] => {
+        console.log(`%c [SearchViewController.ts]-[100]-[id]: `, 'font-size:13px; background:#e6f7ff; color:#118aff;', id);
+        const selectedSearchResultItem = getSelectedSearchResultItem(id);
         return selectedSearchResultItem
             ? getActions(selectedSearchResultItem, favoriteSearchResultItemIds, keyboardShortcuts[operatingSystem])
             : [];
@@ -148,12 +171,13 @@ export const useSearchViewController = ({
             value: viewModel.selectedItemId,
             next: selectNextSearchResultItem,
             previous: selectPreviousSearchResultItem,
+            setSort: selectSortSearchResultItem,
         },
         searchResult: {
             value: viewModel.searchResult,
             set: setSearchResult,
             current: () => getSelectedSearchResultItem(),
-            currentActions: () => getSelectedSearchResultItemActions(),
+            currentActions: (id?: string) => getSelectedSearchResultItemActions(id),
         },
         userInput: {
             ref: userInputRef,

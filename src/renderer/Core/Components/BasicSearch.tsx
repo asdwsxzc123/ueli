@@ -120,7 +120,6 @@ export const BasicSearch = ({
             }, debounceDurationInMs ?? 250),
         );
     }, [searchTerm]);
-
     return (
         <BaseLayout
             header={

@@ -5,9 +5,10 @@ import { SearchResultItemImage } from "./SearchResultItemImage";
 
 type CompactSearchResultListItemProps = {
     searchResultItem: SearchResultItem;
+    sort: number
 };
 
-export const CompactSearchResultListItem = ({ searchResultItem }: CompactSearchResultListItemProps) => {
+export const CompactSearchResultListItem = ({ searchResultItem, sort }: CompactSearchResultListItemProps) => {
     return (
         <div
             style={{
@@ -36,6 +37,7 @@ export const CompactSearchResultListItem = ({ searchResultItem }: CompactSearchR
             </Text>
             <div style={{ flexShrink: 0, display: "flex" }}>
                 <SearchResultItemDescriptionBadge searchResultItem={searchResultItem} />
+                <Text style={{ marginLeft: 8 }}>ALT+{sort+1}</Text>
             </div>
         </div>
     );

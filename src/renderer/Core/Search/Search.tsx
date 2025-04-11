@@ -51,10 +51,9 @@ export const Search = ({
     } = useSearchViewController({
         searchResultItems,
         excludedSearchResultItemIds,
-        favoriteSearchResultItemIds,
+        favoriteSearchResultItemIds: [],
         operatingSystem,
     });
-
     const searchHistory = useSearchHistoryController();
     const containerRef = useRef<HTMLDivElement>(null);
     const additionalActionsButtonRef = useRef<HTMLButtonElement>(null);
@@ -92,12 +91,22 @@ export const Search = ({
                 }),
             },
             {
+                check: (keyboardEvent) => ({
+                    shouldInvokeAction: keyboardEvent.ctrlKey && !isNaN(Number(keyboardEvent.key)),
+                    action: () => {
+                        const id = selectedItemId.setSort(Number(keyboardEvent.key))
+                        const searchResultItemAction = searchResult.currentActions(id).find((action) => action.keyboardShortcut === `Enter`);
+                        searchResultItemAction && invokeAction(searchResultItemAction)
+                    },
+                }),
+            },
+            {
                 check: (keyboardEvent) => {
+                    // custom keyboard shortcuts
                     const searchResultItemAction = getSearchResultItemActionByKeyboardshortcut(
                         keyboardEvent,
                         searchResult.currentActions(),
                     );
-
                     return {
                         shouldInvokeAction: searchResultItemAction !== undefined,
                         action: () => {
@@ -173,37 +182,37 @@ export const Search = ({
         validate: (e: KeyboardEvent) => boolean;
         action: (e: KeyboardEvent) => void;
     }[] = [
-        {
-            validate: (event) =>
-                window.ContextBridge.getOperatingSystem() === "macOS"
-                    ? event.key === "," && event.metaKey
-                    : event.key === "," && event.ctrlKey,
-            action: (event) => {
-                event.preventDefault();
-                window.ContextBridge.openSettings();
+            {
+                validate: (event) =>
+                    window.ContextBridge.getOperatingSystem() === "macOS"
+                        ? event.key === "," && event.metaKey
+                        : event.key === "," && event.ctrlKey,
+                action: (event) => {
+                    event.preventDefault();
+                    window.ContextBridge.openSettings();
+                },
             },
-        },
-        {
-            validate: (event) =>
-                window.ContextBridge.getOperatingSystem() === "macOS"
-                    ? event.key === "k" && event.metaKey
-                    : event.key === "k" && event.ctrlKey,
-            action: (event) => {
-                event.preventDefault();
-                additionalActionsButtonRef.current?.click();
+            {
+                validate: (event) =>
+                    window.ContextBridge.getOperatingSystem() === "macOS"
+                        ? event.key === "k" && event.metaKey
+                        : event.key === "k" && event.ctrlKey,
+                action: (event) => {
+                    event.preventDefault();
+                    additionalActionsButtonRef.current?.click();
+                },
             },
-        },
-        {
-            validate: (event) =>
-                window.ContextBridge.getOperatingSystem() === "macOS"
-                    ? event.key === "l" && event.metaKey
-                    : event.key === "l" && event.ctrlKey,
-            action: () => {
-                userInput.focus();
-                userInput.select();
+            {
+                validate: (event) =>
+                    window.ContextBridge.getOperatingSystem() === "macOS"
+                        ? event.key === "l" && event.metaKey
+                        : event.key === "l" && event.ctrlKey,
+                action: () => {
+                    userInput.focus();
+                    userInput.select();
+                },
             },
-        },
-    ];
+        ];
 
     const keyboardShortcuts: Record<"openSettings" | "openAdditionalActionsMenu", Record<OperatingSystem, string>> = {
         openSettings: {
@@ -302,7 +311,6 @@ export const Search = ({
         (previous, group) => previous + searchResult.value[group].length,
         0,
     );
-
     return (
         <BaseLayout
             header={
