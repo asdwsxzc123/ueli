@@ -30,7 +30,7 @@ export class WindowsSystemCommandRepository implements SystemCommandRepository {
                 invoke: async () => {
                     await this.commandlineUtility.executeCommand("shutdown -s -t 0");
                 },
-                requiresConfirmation: true,
+                requiresConfirmation: false,
             }),
             WindowsSystemCommand.create({
                 name: t("restart"),
@@ -40,7 +40,7 @@ export class WindowsSystemCommandRepository implements SystemCommandRepository {
                 invoke: async () => {
                     await this.commandlineUtility.executeCommand("shutdown -r -t 0");
                 },
-                requiresConfirmation: true,
+                requiresConfirmation: false,
             }),
             WindowsSystemCommand.create({
                 name: t("signOut"),
@@ -50,7 +50,7 @@ export class WindowsSystemCommandRepository implements SystemCommandRepository {
                 invoke: async () => {
                     await this.commandlineUtility.executeCommand("shutdown /l");
                 },
-                requiresConfirmation: true,
+                requiresConfirmation: false,
             }),
             WindowsSystemCommand.create({
                 name: t("lock"),
@@ -60,7 +60,7 @@ export class WindowsSystemCommandRepository implements SystemCommandRepository {
                 invoke: async () => {
                     await this.commandlineUtility.executeCommand("rundll32 user32.dll,LockWorkStation");
                 },
-                requiresConfirmation: true,
+                requiresConfirmation: false,
             }),
             WindowsSystemCommand.create({
                 name: t("sleep"),
@@ -72,7 +72,7 @@ export class WindowsSystemCommandRepository implements SystemCommandRepository {
                         `powershell -NonInteractive -NoProfile -C "$m='[DllImport(\\"Powrprof.dll\\",SetLastError=true)]static extern bool SetSuspendState(bool hibernate,bool forceCritical,bool disableWakeEvent);public static void PowerSleep(){SetSuspendState(false,false,false); }';add-type -name Import -member $m -namespace Dll; [Dll.Import]::PowerSleep();`,
                     );
                 },
-                requiresConfirmation: true,
+                requiresConfirmation: false,
             }),
             WindowsSystemCommand.create({
                 name: t("hibernate"),
@@ -82,7 +82,7 @@ export class WindowsSystemCommandRepository implements SystemCommandRepository {
                 invoke: async () => {
                     await this.commandlineUtility.executeCommand("shutdown /h");
                 },
-                requiresConfirmation: true,
+                requiresConfirmation: false,
             }),
             WindowsSystemCommand.create({
                 name: t("emptyTrash"),
@@ -92,7 +92,7 @@ export class WindowsSystemCommandRepository implements SystemCommandRepository {
                 invoke: async () => {
                     await this.powershellUtility.executeCommand("Clear-RecycleBin -Force");
                 },
-                requiresConfirmation: true,
+                requiresConfirmation: false,
             }),
         ];
     }
