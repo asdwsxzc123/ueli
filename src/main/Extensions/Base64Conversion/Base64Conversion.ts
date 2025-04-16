@@ -19,6 +19,11 @@ export class Base64Conversion implements Extension {
     public readonly id = "Base64Conversion";
     public readonly name = "Base64 Conversion";
 
+    public readonly nameTranslation = {
+        key: "extensionName",
+        namespace: "extension[Base64Conversion]",
+    };
+
     public readonly defaultSettings: Settings = {
         encodeDecodePrefix: "b64",
         encodePrefix: "b64e",
@@ -42,6 +47,7 @@ export class Base64Conversion implements Extension {
         const decodePrefix = this.getSettingValue("decodePrefix");
 
         const results: InvocationResult[] = [];
+
         if (searchTerm.toLowerCase().startsWith(encodePrefix + " ") && searchTerm.length > encodePrefix.length + 1) {
             results.push({
                 action: "encoded",
@@ -161,6 +167,20 @@ export class Base64Conversion implements Extension {
                 encodeDecodePrefix: "Präfix für Kodierung und Dekodierung",
                 encodePrefix: "Präfix für Kodierung",
                 decodePrefix: "Präfix für Dekodierung",
+            },
+            "ja-JP": {
+                extensionName: "Base64変換",
+                searchResultItemDescription: "Base64エンコード/デコード",
+                searchResultItemName: "Base64変換 | Base64 Conversion",
+                searchResultItemActionDescription: "Base64変換対象を開く",
+                copyToClipboard: "結果をクリップボードにコピー",
+                encodePlaceHolder: "エンコードしたい文字列を入力",
+                decodePlaceHolder: "デコードしたい文字列を入力",
+                encoded: "エンコード済み",
+                decoded: "デコード済み",
+                encodeDecodePrefix: "変換時に接頭辞を使用する",
+                encodePrefix: "エンコード時の接頭辞",
+                decodePrefix: "デコード時の接頭辞",
             },
         };
     }

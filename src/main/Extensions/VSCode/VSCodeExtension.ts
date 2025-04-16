@@ -128,10 +128,12 @@ export class VSCodeExtension implements Extension {
 
     private getPath = (uri: string) => {
         const decodedUri = decodeURIComponent(uri);
+
         if (uri.startsWith("file://")) {
             const url = new URL(decodedUri);
             return Url.fileURLToPath(url, { windows: this.operatingSystem === "Windows" });
         }
+
         return decodedUri;
     };
 
@@ -217,6 +219,16 @@ export class VSCodeExtension implements Extension {
                 command: "Command",
                 commandTooltip:
                     "Use %s where the selected file/project should be inserted. It uses the --file-uri or --folder-uri switch",
+                showPath: "Show file/folder path",
+            },
+            "ja-JP": {
+                extensionName: "Visual Studio Code",
+                prefix: "接頭辞",
+                prefixDescription:
+                    "Visual Studio Code起動のトリガとなる接頭辞です。次のパターンで使用します： <prefix> <command>",
+                command: "コマンド",
+                commandTooltip:
+                    "%s が開きたいファイル/プロジェクトに置換されます。これは起動スイッチの --file-uri もしくは --folder-uri で使用されます",
                 showPath: "Show file/folder path",
             },
         };
@@ -335,6 +347,7 @@ export const isPath = (searchTerm: string | null | undefined) => {
     if (!searchTerm) {
         return false;
     }
+
     const windowMatch = searchTerm.match(/[A-Z]:.*/) !== null;
     return searchTerm.startsWith("/") || searchTerm.startsWith("~") || windowMatch;
 };

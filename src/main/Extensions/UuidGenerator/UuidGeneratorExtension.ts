@@ -27,6 +27,11 @@ export class UuidGeneratorExtension implements Extension {
         searchResultFormats: [],
     };
 
+    public readonly nameTranslation = {
+        key: "extensionName",
+        namespace: "extension[UuidGenerator]",
+    };
+
     public readonly author = {
         name: "Christopher Steiner",
         githubUserName: "ChristopherSteiner",
@@ -43,6 +48,7 @@ export class UuidGeneratorExtension implements Extension {
         const validateStrictly = this.getSettingValue("validateStrictly");
 
         let uuidSearchTerm = searchTerm;
+
         if (uuidSearchTerm.toLowerCase().startsWith("uuid") || uuidSearchTerm.toLowerCase().startsWith("guid")) {
             uuidSearchTerm = uuidSearchTerm.substring(4);
         }
@@ -54,6 +60,7 @@ export class UuidGeneratorExtension implements Extension {
             braces: false,
             quotes: false,
         });
+
         if (this.validateUuid(possibleUuid)) {
             return {
                 after: [],
@@ -171,6 +178,25 @@ export class UuidGeneratorExtension implements Extension {
                 addSearchResultFormat: "Format hinzufügen",
                 removeSearchResultFormat: "Format entfernen",
             },
+            "ja-JP": {
+                copyUuidToClipboard: "UUIDをクリップボードにコピー",
+                copyUuidsToClipboard: "複数UUIDをクリップボードにコピー",
+                extensionName: "UUID/GUIDを生成",
+                generatorResult: "UUID/GUID",
+                openGeneratorDescription: "複数UUID/GUIDを生成",
+                openGeneratorName: "UUID/GUIDを生成 | UUID / GUID Generator",
+                uuidVersion: "UUIDバージョン",
+                numberOfUuids: "生成するUUIDの数",
+                validateStrictly: "UUIDの構造を検証する",
+                uppercase: "大文字に変換",
+                hyphens: "ハイフンで区切る",
+                braces: "括弧で囲む",
+                quotes: "引用符で囲む",
+                defaultGeneratorFormat: "生成する書式の設定",
+                searchResultFormats: "検索",
+                addSearchResultFormat: "書式を追加",
+                removeSearchResultFormat: "書式を削除",
+            },
         };
     }
 
@@ -194,6 +220,7 @@ export class UuidGeneratorExtension implements Extension {
 
     public async invoke(settings: Settings): Promise<string[]> {
         const result = [];
+
         for (let index = 0; index < settings.numberOfUuids; index++) {
             result.push(
                 this.generateUuid(
@@ -205,6 +232,7 @@ export class UuidGeneratorExtension implements Extension {
                 ),
             );
         }
+
         return result;
     }
 
