@@ -37,7 +37,7 @@ export const CompactSearchResultListItem = ({ searchResultItem, sort }: CompactS
             </Text>
             <div style={{ flexShrink: 0, display: "flex" }}>
                 <SearchResultItemDescriptionBadge searchResultItem={searchResultItem} />
-                <Text style={{ marginLeft: 8 }}>ALT+{sort+1}</Text>
+                {sort + 1 < 10 && <Text style={{ marginLeft: 8 }}>ALT+{sort + 1}</Text>}
             </div>
         </div>
     );

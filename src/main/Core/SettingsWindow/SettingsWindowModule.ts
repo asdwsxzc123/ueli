@@ -26,6 +26,12 @@ export class SettingsWindowModule {
 
         ipcMain.on("openSettings", async () => {
             const settingsWindow = await settingsWindowManager.getWindow();
+            process.env.NODE_ENV === 'development' && settingsWindow.webContents.on('before-input-event', (event, input) => {
+                if (input.key === 'F12') {
+                    settingsWindow.webContents.openDevTools();
+                    event.preventDefault();
+                }
+            });
             settingsWindow.focus();
             settingsWindow.show();
         });

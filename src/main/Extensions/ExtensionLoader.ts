@@ -22,6 +22,7 @@ import { VSCodeModule } from "./VSCode";
 import { WebSearchExtensionModule } from "./WebSearch";
 import { WindowsControlPanelModule } from "./WindowsControlPanel";
 import { WorkflowExtensionModule } from "./Workflow";
+import { ClipboardHistoryModule } from "./ClipboardHistory";
 
 export class ExtensionLoader {
     private static getAllExtensionModules(): ExtensionModule[] {
@@ -49,6 +50,7 @@ export class ExtensionLoader {
             new UeliCommandModule(),
             new UuidGeneratorModule(),
             new VSCodeModule(),
+            new ClipboardHistoryModule(),
             new WebSearchExtensionModule(),
             new WindowsControlPanelModule(),
             new WorkflowExtensionModule(),

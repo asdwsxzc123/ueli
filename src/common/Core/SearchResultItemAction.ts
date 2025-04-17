@@ -16,13 +16,35 @@ export type SearchResultItemAction = {
 
     /**
      * The argument that will be passed to the action handler when invoking the action.
+     * if handlerId is Commandline,argument need JSON.stringify({})
      */
     argument: string;
 
     /**
      * The ID of the action handler that will be invoked when invoking the action.
+     * navigateTo: navigate new page
+     * copyToClipboard: copy to clipboard
+     * Commandline: system cmd
      */
-    handlerId: string;
+    handlerId:
+    | 'Custom'
+    | 'AppearanceSwitcher'
+    | 'Commandline'
+    | 'copyToClipboard'
+    | 'excludeFromSearchResults'
+    | 'Favorites'
+    | 'navigateTo'
+    | 'OpenFilePath'
+    | 'OpenFile'
+    | 'Url'
+    | 'UeliCommand'
+    | 'Workflow'
+    | 'LaunchDesktopFile'
+    | 'LaunchTerminalActionHandler'
+    | 'WindowsOpenAsAdministrator'
+    | 'WindowsSystemSetting'
+    | 'ShowItemInFileExplorer'
+    | 'SystemCommandActionHandler';
 
     /**
      * Determines if the action requires confirmation before invoking.
@@ -47,4 +69,7 @@ export type SearchResultItemAction = {
      * `Enter`.
      */
     keyboardShortcut?: string;
+
+    itemId?: string;
+    extensionId?: string;
 };

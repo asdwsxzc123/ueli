@@ -17,6 +17,8 @@ import { VSCodeSettings } from "./VSCode";
 import { WebSearchExtension } from "./WebSearch";
 import { WebSearchSettings } from "./WebSearch/WebSearchSettings";
 import { WorkflowSettings } from "./Workflow";
+import { ClipboardHistorySettings } from "./ClipboardHistory";
+import '../main.css'
 
 type ExtensionReactElements = {
     extension?: ReactElement;
@@ -83,6 +85,9 @@ export const getExtension = (extensionId: string): ExtensionReactElements | unde
         },
         Workflow: {
             settings: <WorkflowSettings />,
+        },
+        ClipboardHistory: {
+            settings: <ClipboardHistorySettings />,
         },
     };
 

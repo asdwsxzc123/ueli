@@ -8,7 +8,7 @@ export class BrowserWindowToggler {
         private readonly app: App,
         private readonly browserWindow: BrowserWindow,
         private readonly browserWindowRegistry: BrowserWindowRegistry,
-    ) {}
+    ) { }
 
     public toggle(): void {
         if (this.isVisibleAndFocused()) {
@@ -34,6 +34,8 @@ export class BrowserWindowToggler {
         }
 
         this.browserWindow.hide();
+        // clear search input
+        this.browserWindow.webContents.send('clear-search-input');
     }
 
     public showAndFocus(): void {

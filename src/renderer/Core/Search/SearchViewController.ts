@@ -1,7 +1,7 @@
 import { useSetting } from "@Core/Hooks";
 import type { OperatingSystem, SearchResultItem, SearchResultItemAction } from "@common/Core";
 import type { SearchEngineId } from "@common/Core/Search";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getActions, getNextSearchResultItemId, getPreviousSearchResultItemId } from "./Helpers";
 import { getSearchResult } from "./Helpers/getSearchResult";
 import { useStateRef } from "@Core/Hooks/useStateRef";
@@ -56,8 +56,20 @@ export const useSearchViewController = ({
             excludeFromSearchResults: "Ctrl+Delete",
         },
     };
-
     const userInputRef = useRef<HTMLInputElement>(null);
+    const resetViewModal = () => {
+        search('');
+    }
+
+    useEffect(() => {
+        function handler() {
+            resetViewModal()
+        }
+        window.ContextBridge.ipcRenderer.on('clear-search-input', handler);
+        return () => {
+            window.ContextBridge.ipcRenderer.off('clear-search-input', handler);
+        }
+    }, [])
 
     const setSearchTerm = (searchTerm: string) => setViewModel({ ...viewModel, searchTerm });
 
@@ -100,7 +112,6 @@ export const useSearchViewController = ({
     };
 
     const getSelectedSearchResultItemActions = (id?: string): SearchResultItemAction[] => {
-        console.log(`%c [SearchViewController.ts]-[100]-[id]: `, 'font-size:13px; background:#e6f7ff; color:#118aff;', id);
         const selectedSearchResultItem = getSelectedSearchResultItem(id);
         return selectedSearchResultItem
             ? getActions(selectedSearchResultItem, favoriteSearchResultItemIds, keyboardShortcuts[operatingSystem])

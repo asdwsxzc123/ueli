@@ -57,12 +57,14 @@ export class SearchWindowModule {
         if (app.isPackaged) {
             searchWindow.removeMenu();
         }
-        searchWindow.webContents.on('before-input-event', (event, input) => {
-            if (input.key === 'F12') { // 自定义快捷键
+        process.env.NODE_ENV === 'development' && searchWindow.webContents.on('before-input-event', (event, input) => {
+            if (input.key === 'F12') {
                 searchWindow.webContents.openDevTools();
                 event.preventDefault();
             }
         });
+
+
         const browserWindowToggler = new BrowserWindowToggler(
             operatingSystem,
             app,
