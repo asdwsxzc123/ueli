@@ -70,7 +70,7 @@ Here you might find some logs that help find the issue.
 - [Visual Studio Code](docs/Extensions/VSCode/README.md)
 - [Web Search](docs/Extensions/WebSearch/README.md)
 - [Windows Control Panel](docs/Extensions/WindowsControlPanel/README.md)
-- [Clipboard History](docs/Extensions/ClipboardHistory/README.md)
+- [Clipboard History(New)](docs/Extensions/ClipboardHistory/README.md)
 
 # Known issues
 
