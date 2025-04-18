@@ -12,7 +12,8 @@ export class ClipboardHistoryModule implements ExtensionModule {
                 moduleRegistry.get("Logger"),
                 moduleRegistry.get("SettingsManager"),
                 moduleRegistry.get("App"),
-                moduleRegistry.get("EventSubscriber")
-            ), };
+                moduleRegistry.get("EventSubscriber"),
+            ),
+        };
     }
 }

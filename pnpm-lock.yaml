@@ -72,6 +72,9 @@ importers:
       '@eslint/js':
         specifier: ^9.19.0
         version: 9.24.0
+      '@fluentui/react-theme':
+        specifier: ^9.1.24
+        version: 9.1.24
       '@types/better-sqlite3':
         specifier: ^7.6.11
         version: 7.6.13

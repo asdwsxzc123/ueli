@@ -1,10 +1,10 @@
 import { useSetting } from "@Core/Hooks";
+import { useStateRef } from "@Core/Hooks/useStateRef";
 import type { OperatingSystem, SearchResultItem, SearchResultItemAction } from "@common/Core";
 import type { SearchEngineId } from "@common/Core/Search";
 import { useEffect, useRef, useState } from "react";
 import { getActions, getNextSearchResultItemId, getPreviousSearchResultItemId } from "./Helpers";
 import { getSearchResult } from "./Helpers/getSearchResult";
-import { useStateRef } from "@Core/Hooks/useStateRef";
 
 type ViewModel = {
     searchTerm: string;
@@ -41,7 +41,7 @@ export const useSearchViewController = ({
         searchTerm: "",
         selectedItemId: "",
     });
-    const selectedItemIdRef = useStateRef(viewModel.selectedItemId)
+    const selectedItemIdRef = useStateRef(viewModel.selectedItemId);
     const keyboardShortcuts: Record<OperatingSystem, Record<"addToFavorites" | "excludeFromSearchResults", string>> = {
         Linux: {
             addToFavorites: "Ctrl+F",
@@ -58,18 +58,18 @@ export const useSearchViewController = ({
     };
     const userInputRef = useRef<HTMLInputElement>(null);
     const resetViewModal = () => {
-        search('');
-    }
+        search("");
+    };
 
     useEffect(() => {
-        function handler() {
-            resetViewModal()
-        }
-        window.ContextBridge.ipcRenderer.on('clear-search-input', handler);
+        const handler = () => {
+            resetViewModal();
+        };
+        window.ContextBridge.ipcRenderer.on("clear-search-input", handler);
         return () => {
-            window.ContextBridge.ipcRenderer.off('clear-search-input', handler);
-        }
-    }, [])
+            window.ContextBridge.ipcRenderer.off("clear-search-input", handler);
+        };
+    }, []);
 
     const setSearchTerm = (searchTerm: string) => setViewModel({ ...viewModel, searchTerm });
 
@@ -77,7 +77,7 @@ export const useSearchViewController = ({
 
     const setSearchResult = (searchResult: Record<string, SearchResultItem[]>) => {
         return setViewModel({ ...viewModel, searchResult });
-    }
+    };
 
     const selectNextSearchResultItem = () =>
         setSelectedItemId(
@@ -89,25 +89,22 @@ export const useSearchViewController = ({
             getPreviousSearchResultItemId(viewModel.selectedItemId, collectSearchResultItems(viewModel.searchResult)),
         );
 
-
     /**
      *
      * @param sort starting from 1
      * @returns
      */
     const selectSortSearchResultItem = (sort: number) => {
-        const id = collectSearchResultItems(viewModel.searchResult)[sort - 1]?.id ?? viewModel.selectedItemId
-        setSelectedItemId(
-            id,
-        );
-        return id
-    }
+        const id = collectSearchResultItems(viewModel.searchResult)[sort - 1]?.id ?? viewModel.selectedItemId;
+        setSelectedItemId(id);
+        return id;
+    };
 
     const getSelectedSearchResultItem = (id?: string): SearchResultItem | undefined => {
         if (id) {
             return collectSearchResultItems(viewModel.searchResult).find((s) => s.id === id);
         } else {
-            return collectSearchResultItems(viewModel.searchResult).find((s) => s.id === selectedItemIdRef.current)
+            return collectSearchResultItems(viewModel.searchResult).find((s) => s.id === selectedItemIdRef.current);
         }
     };
 

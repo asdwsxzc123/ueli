@@ -1,5 +1,7 @@
 # Clipboard History
+
 - save copy to clipboard history
+
 ## Settings
 
 - prefix: copy

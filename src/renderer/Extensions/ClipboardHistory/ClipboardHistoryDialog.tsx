@@ -1,7 +1,6 @@
-import { ClipboardItem } from "@common/Extensions/ClipBoardHistory";
+import type { ClipboardItem } from "@common/Extensions/ClipBoardHistory";
 import {
     Button,
-    Checkbox,
     Dialog,
     DialogActions,
     DialogBody,
@@ -10,7 +9,6 @@ import {
     DialogTitle,
     DialogTrigger,
     Field,
-    InfoLabel,
     Input,
 } from "@fluentui/react-components";
 import { useEffect, useState } from "react";
@@ -30,17 +28,20 @@ export const ClipboardHistoryDialog = ({
     isDialogOpen,
     closeDialog,
 }: CustomWebSearchDialogProps) => {
-    const [temporaryCustomSearchEngineSetting, setTemporaryCustomSearchEngineSetting] =
-        useState<ClipboardItem | undefined>(initialEngineSetting);
+    const [temporaryCustomSearchEngineSetting, setTemporaryCustomSearchEngineSetting] = useState<
+        ClipboardItem | undefined
+    >(initialEngineSetting);
     useEffect(() => {
-        isDialogOpen && setTemporaryCustomSearchEngineSetting(isAddDialog ? undefined : initialEngineSetting);
+        if (isDialogOpen) {
+            setTemporaryCustomSearchEngineSetting(isAddDialog ? undefined : initialEngineSetting);
+        }
     }, [initialEngineSetting, isDialogOpen, isAddDialog]);
     const setContent = (content: string) => {
         setTemporaryCustomSearchEngineSetting({ ...temporaryCustomSearchEngineSetting, content });
     };
     const _closeDialog = () => {
-        closeDialog()
-    }
+        closeDialog();
+    };
     return (
         <Dialog
             open={isDialogOpen}
@@ -54,16 +55,10 @@ export const ClipboardHistoryDialog = ({
         >
             <DialogSurface>
                 <DialogBody>
-                    <DialogTitle>{isAddDialog ? 'Add' : 'Edit'}</DialogTitle>
+                    <DialogTitle>{isAddDialog ? "Add" : "Edit"}</DialogTitle>
                     <DialogContent>
                         <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: 10 }}>
-                            <Field
-                                orientation="horizontal"
-                                required={true}
-                                label={
-                                    'content'
-                                }
-                            >
+                            <Field orientation="horizontal" required={true} label={"content"}>
                                 <Input
                                     value={temporaryCustomSearchEngineSetting?.content}
                                     onChange={(_, { value }) => setContent(value)}
@@ -79,7 +74,8 @@ export const ClipboardHistoryDialog = ({
                         </DialogTrigger>
                         <Button
                             onClick={() => {
-                                const content = (temporaryCustomSearchEngineSetting?.content || '').trim();
+                                const content = (temporaryCustomSearchEngineSetting?.content || "").trim();
+
                                 if (!content) {
                                     return;
                                 }
@@ -87,7 +83,6 @@ export const ClipboardHistoryDialog = ({
                                 _closeDialog();
 
                                 onSave({ ...temporaryCustomSearchEngineSetting, content });
-
                             }}
                             appearance="primary"
                         >

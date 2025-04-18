@@ -16,7 +16,7 @@ type SearchResultListItemProps = {
     searchResultItem: SearchResultItem;
     scrollBehavior: ScrollBehavior;
     dragAndDropEnabled: boolean;
-    sort: number
+    sort: number;
 };
 
 export const SearchResultListItem = ({
@@ -28,7 +28,7 @@ export const SearchResultListItem = ({
     scrollBehavior,
     layout,
     dragAndDropEnabled,
-    sort
+    sort,
 }: SearchResultListItemProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState<boolean>(false);

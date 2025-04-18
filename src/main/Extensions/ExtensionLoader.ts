@@ -4,6 +4,7 @@ import { ApplicationSearchModule } from "./ApplicationSearch";
 import { Base64ConversionModule } from "./Base64Conversion";
 import { BrowserBookmarksModule } from "./BrowserBookmarks";
 import { CalculatorModule } from "./Calculator";
+import { ClipboardHistoryModule } from "./ClipboardHistory";
 import { ColorConverterExtensionModule } from "./ColorConverter";
 import { CurrencyConversionModule } from "./CurrencyConversion/CurrencyConversionModule";
 import { CustomWebSearchModule } from "./CustomWebSearch";
@@ -22,7 +23,6 @@ import { VSCodeModule } from "./VSCode";
 import { WebSearchExtensionModule } from "./WebSearch";
 import { WindowsControlPanelModule } from "./WindowsControlPanel";
 import { WorkflowExtensionModule } from "./Workflow";
-import { ClipboardHistoryModule } from "./ClipboardHistory";
 
 export class ExtensionLoader {
     private static getAllExtensionModules(): ExtensionModule[] {

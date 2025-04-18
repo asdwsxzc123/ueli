@@ -20,7 +20,6 @@ export class Calculator {
             return false;
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let result: any;
 
         try {
@@ -105,7 +104,6 @@ export class Calculator {
         return result;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private static isValidMathType(value: any): boolean {
         const mathType = typeOf(value);
 

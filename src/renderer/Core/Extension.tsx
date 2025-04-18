@@ -3,6 +3,7 @@ import { getExtension } from "../Extensions";
 
 export const Extension = () => {
     const extensionId = useParams().extensionId;
+
     if (!extensionId) {
         return <>Missing extension id</>;
     }

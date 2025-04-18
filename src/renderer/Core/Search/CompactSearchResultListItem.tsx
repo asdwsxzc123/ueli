@@ -5,7 +5,7 @@ import { SearchResultItemImage } from "./SearchResultItemImage";
 
 type CompactSearchResultListItemProps = {
     searchResultItem: SearchResultItem;
-    sort: number
+    sort: number;
 };
 
 export const CompactSearchResultListItem = ({ searchResultItem, sort }: CompactSearchResultListItemProps) => {

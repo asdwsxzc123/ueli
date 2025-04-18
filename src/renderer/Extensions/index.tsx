@@ -1,9 +1,11 @@
 import { useExtensionProps } from "@Core/Hooks";
 import type { ReactElement } from "react";
+import "../main.css";
 import { ApplicationSearchSettings } from "./ApplicationSearch";
 import { Base64Conversion, Base64ConversionSettings } from "./Base64Conversion";
 import { BrowserBookmarksSettings } from "./BrowserBookmarks";
 import { CalculatorSettings } from "./Calculator";
+import { ClipboardHistorySettings } from "./ClipboardHistory";
 import { ColorConverterSettings } from "./ColorConverter";
 import { CurrencyConversionSettings } from "./CurrencyConversion";
 import { CustomWebSearchSettings } from "./CustomWebSearch";
@@ -17,8 +19,6 @@ import { VSCodeSettings } from "./VSCode";
 import { WebSearchExtension } from "./WebSearch";
 import { WebSearchSettings } from "./WebSearch/WebSearchSettings";
 import { WorkflowSettings } from "./Workflow";
-import { ClipboardHistorySettings } from "./ClipboardHistory";
-import '../main.css'
 
 type ExtensionReactElements = {
     extension?: ReactElement;
@@ -45,6 +45,9 @@ export const getExtension = (extensionId: string): ExtensionReactElements | unde
         },
         Calculator: {
             settings: <CalculatorSettings />,
+        },
+        ClipboardHistory: {
+            settings: <ClipboardHistorySettings />,
         },
         ColorConverter: {
             settings: <ColorConverterSettings />,
@@ -83,11 +86,9 @@ export const getExtension = (extensionId: string): ExtensionReactElements | unde
             extension: <WebSearchExtension {...props} />,
             settings: <WebSearchSettings />,
         },
+
         Workflow: {
             settings: <WorkflowSettings />,
-        },
-        ClipboardHistory: {
-            settings: <ClipboardHistorySettings />,
         },
     };
 

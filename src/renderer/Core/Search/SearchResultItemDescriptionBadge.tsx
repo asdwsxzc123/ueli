@@ -8,8 +8,8 @@ export const SearchResultItemDescriptionBadge = ({ searchResultItem }: { searchR
         <Badge color="subtle" size="small">
             {searchResultItem.descriptionTranslation
                 ? t(searchResultItem.descriptionTranslation.key, {
-                    ns: searchResultItem.descriptionTranslation.namespace,
-                })
+                      ns: searchResultItem.descriptionTranslation.namespace,
+                  })
                 : searchResultItem.description}
         </Badge>
     );

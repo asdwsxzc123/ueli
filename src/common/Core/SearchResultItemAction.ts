@@ -27,24 +27,25 @@ export type SearchResultItemAction = {
      * Commandline: system cmd
      */
     handlerId:
-    | 'Custom'
-    | 'AppearanceSwitcher'
-    | 'Commandline'
-    | 'copyToClipboard'
-    | 'excludeFromSearchResults'
-    | 'Favorites'
-    | 'navigateTo'
-    | 'OpenFilePath'
-    | 'OpenFile'
-    | 'Url'
-    | 'UeliCommand'
-    | 'Workflow'
-    | 'LaunchDesktopFile'
-    | 'LaunchTerminalActionHandler'
-    | 'WindowsOpenAsAdministrator'
-    | 'WindowsSystemSetting'
-    | 'ShowItemInFileExplorer'
-    | 'SystemCommandActionHandler';
+        | string
+        | "Custom"
+        | "AppearanceSwitcher"
+        | "Commandline"
+        | "copyToClipboard"
+        | "excludeFromSearchResults"
+        | "Favorites"
+        | "navigateTo"
+        | "OpenFilePath"
+        | "OpenFile"
+        | "Url"
+        | "UeliCommand"
+        | "Workflow"
+        | "LaunchDesktopFile"
+        | "LaunchTerminalActionHandler"
+        | "WindowsOpenAsAdministrator"
+        | "WindowsSystemSetting"
+        | "ShowItemInFileExplorer"
+        | "SystemCommandActionHandler";
 
     /**
      * Determines if the action requires confirmation before invoking.
