@@ -46,6 +46,7 @@ export class CustomWebSearchExtension implements Extension {
                 handlerId: "Url",
                 description: `Search in default Browser`,
                 argument: searchUrl,
+                hideWindowAfterInvocation: true,
             },
         };
     }
