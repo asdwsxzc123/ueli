@@ -7,12 +7,16 @@ export class GlobalShortcutModule {
         const eventEmitter = moduleRegistry.get("EventEmitter");
         const eventSubscriber = moduleRegistry.get("EventSubscriber");
         const settingsManager = moduleRegistry.get("SettingsManager");
+        const operatingSystem = moduleRegistry.get("OperatingSystem");
         const logger = moduleRegistry.get("Logger");
 
         const hotkeyIsEnabled = () => settingsManager.getValue("general.hotkey.enabled", true);
 
         const registerHotkey = () => {
-            const hotkey = settingsManager.getValue("general.hotkey", "Alt+Space");
+            const hotkey = settingsManager.getValue(
+                "general.hotkey",
+                operatingSystem === "macOS" ? "Cmd+Space" : "Alt+Space",
+            );
 
             if (!isValidHotkey(hotkey)) {
                 logger.error(`Unable to register hotkey. Reason: unexpected hotkey ${hotkey}`);
