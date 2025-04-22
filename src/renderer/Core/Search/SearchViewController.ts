@@ -1,6 +1,6 @@
 import { useSetting } from "@Core/Hooks";
 import { useStateRef } from "@Core/Hooks/useStateRef";
-import type { OperatingSystem, SearchResultItem, SearchResultItemAction } from "@common/Core";
+import type { ExtensionInfo, OperatingSystem, SearchResultItem, SearchResultItemAction } from "@common/Core";
 import type { SearchEngineId } from "@common/Core/Search";
 import { useEffect, useRef, useState } from "react";
 import { getActions, getNextSearchResultItemId, getPreviousSearchResultItemId } from "./Helpers";
@@ -18,6 +18,7 @@ type SearchViewControllerProps = {
     excludedSearchResultItemIds: string[];
     favoriteSearchResultItemIds: string[];
     operatingSystem: OperatingSystem;
+    extensions: ExtensionInfo[];
 };
 
 const collectSearchResultItems = (searchResult: Record<string, SearchResultItem[]>) => {
@@ -35,12 +36,14 @@ export const useSearchViewController = ({
     excludedSearchResultItemIds,
     favoriteSearchResultItemIds,
     operatingSystem,
+    extensions,
 }: SearchViewControllerProps) => {
     const [viewModel, setViewModel] = useState<ViewModel>({
         searchResult: {},
         searchTerm: "",
         selectedItemId: "",
     });
+
     const selectedItemIdRef = useStateRef(viewModel.selectedItemId);
     const keyboardShortcuts: Record<OperatingSystem, Record<"addToFavorites" | "excludeFromSearchResults", string>> = {
         Linux: {
@@ -129,6 +132,7 @@ export const useSearchViewController = ({
             maxSearchResultItems,
             searchResultItems,
             searchTerm,
+            extensions,
         });
 
         setViewModel({

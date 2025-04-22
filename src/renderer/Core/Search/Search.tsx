@@ -38,7 +38,7 @@ export const Search = ({
     const [additionalActionsMenuIsOpen, setAdditionalActionsMenuIsOpen] = useState(false);
 
     const operatingSystem = window.ContextBridge.getOperatingSystem();
-
+    const extensions = window.ContextBridge.getEnabledExtensions();
     const {
         searchResult,
         searchTerm,
@@ -53,6 +53,7 @@ export const Search = ({
         excludedSearchResultItemIds,
         favoriteSearchResultItemIds: [],
         operatingSystem,
+        extensions,
     });
     const searchHistory = useSearchHistoryController();
     const containerRef = useRef<HTMLDivElement>(null);

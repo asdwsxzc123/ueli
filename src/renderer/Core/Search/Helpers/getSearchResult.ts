@@ -1,4 +1,4 @@
-import type { InstantSearchResultItems, SearchResultItem } from "@common/Core";
+import type { ExtensionInfo, InstantSearchResultItems, SearchResultItem } from "@common/Core";
 import { searchFilter, SearchResultItemFilter, type SearchEngineId } from "@common/Core/Search";
 
 export const getSearchResult = ({
@@ -10,6 +10,7 @@ export const getSearchResult = ({
     searchTerm,
     fuzziness,
     maxSearchResultItems,
+    extensions,
 }: {
     searchEngineId: SearchEngineId;
     favoriteSearchResultItemIds: string[];
@@ -19,8 +20,10 @@ export const getSearchResult = ({
     searchTerm: string;
     fuzziness: number;
     maxSearchResultItems: number;
+    extensions: ExtensionInfo[];
 }): Record<string, SearchResultItem[]> => {
     searchResultItems = SearchResultItemFilter.createFrom(searchResultItems).exclude(excludedSearchResultItemIds).get();
+    console.log(extensions, "extensions");
 
     if (searchTerm.length > 0) {
         const searchFilterItems = searchFilter(
