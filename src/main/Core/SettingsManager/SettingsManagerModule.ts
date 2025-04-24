@@ -9,12 +9,16 @@ export class SettingsManagerModule {
         const settingsWriter = moduleRegistry.get("SettingsWriter");
         const eventEmitter = moduleRegistry.get("EventEmitter");
         const safeStorageEncryption = moduleRegistry.get("SafeStorageEncryption");
+        const settingsFile = moduleRegistry.get("SettingsFile");
+        const shell = moduleRegistry.get("Shell");
 
         const settingsManager = new SettingsManager(
             settingsReader,
             settingsWriter,
+            settingsFile,
             eventEmitter,
             safeStorageEncryption,
+            shell,
         );
 
         moduleRegistry.register("SettingsManager", settingsManager);
@@ -42,6 +46,9 @@ export class SettingsManagerModule {
             app.exit();
         });
 
+        ipcMain.handle("openSettingsFile", async () => {
+            await settingsManager.openSettingsFile();
+        });
         ipcMain.handle("exportSettings", async (_, { filePath }) => {
             await settingsManager.exportSettings(filePath);
         });

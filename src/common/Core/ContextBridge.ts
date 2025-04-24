@@ -32,6 +32,7 @@ export type ContextBridge = {
     autostartSettingsChanged: (autostartIsEnabled: boolean) => void;
     copyTextToClipboard: (textToCopy: string) => void;
     exportSettings: (filePath: string) => Promise<void>;
+    openSettingsFile: () => Promise<void>;
     extensionDisabled: (extensionId: string) => void;
     extensionEnabled: (extensionId: string) => void;
     fileExists: (filePath: string) => boolean;

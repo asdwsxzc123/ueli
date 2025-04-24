@@ -1,4 +1,6 @@
 import type { SafeStorageEncryption } from "@Core/SafeStorageEncryption";
+import type { SettingsFile } from "@Core/SettingsFile";
+import type { Shell } from "electron";
 import type { EventEmitter } from "../EventEmitter";
 import type { Settings } from "../Settings";
 import type { SettingsReader } from "../SettingsReader";
@@ -11,8 +13,10 @@ export class SettingsManager implements SettingsManagerInterface {
     public constructor(
         private readonly settingsReader: SettingsReader,
         private readonly settingsWriter: SettingsWriter,
+        private readonly settingsFile: SettingsFile,
         private readonly eventEmitter: EventEmitter,
         private readonly safeStorageEncryption: SafeStorageEncryption,
+        private readonly shell: Shell,
     ) {
         this.settings = this.settingsReader.readSettings();
     }
@@ -40,6 +44,10 @@ export class SettingsManager implements SettingsManagerInterface {
 
     public async exportSettings(filePath: string): Promise<void> {
         this.settingsWriter.writeSettingsToPath(this.settings, filePath);
+    }
+    public async openSettingsFile(): Promise<void> {
+        const path = this.settingsFile.path;
+        this.shell.openPath(path);
     }
 
     public async resetAllSettings(): Promise<void> {

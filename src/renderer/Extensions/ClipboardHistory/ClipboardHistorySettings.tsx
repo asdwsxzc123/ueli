@@ -96,35 +96,38 @@ export const ClipboardHistorySettings = () => {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHeaderCell style={{ width: 120 }}>{"id"}</TableHeaderCell>
-                        <TableHeaderCell style={{ width: 120 }}>{"Content"}</TableHeaderCell>
-                        <TableHeaderCell style={{ width: 120 }}>{"Operator"}</TableHeaderCell>
+                        <TableHeaderCell style={{ width: 80 }}>{"id"}</TableHeaderCell>
+                        <TableHeaderCell style={{ width: 180 }}>{"Content"}</TableHeaderCell>
+                        <TableHeaderCell style={{ width: 70 }}>{"Operator"}</TableHeaderCell>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {clipBoardHistorySetting?.initRecords?.map(({ id, content }) => (
-                        <TableRow key={id}>
-                            <TableCell>{id}</TableCell>
-                            <TableCell>{content}</TableCell>
-                            <TableCell>
-                                <Tooltip relationship="label" content={"edit"}>
-                                    <Button
-                                        size="small"
-                                        icon={<EditRegular />}
-                                        onClick={() => openEditDialog({ id, content })}
-                                    />
-                                </Tooltip>
-                                <Tooltip relationship="label" content={"remove"}>
-                                    <Button
-                                        style={{ marginLeft: 4 }}
-                                        size="small"
-                                        icon={<DismissRegular />}
-                                        onClick={() => removeClipboardRecord(id as string)}
-                                    />
-                                </Tooltip>
-                            </TableCell>
-                        </TableRow>
-                    ))}
+                    {clipBoardHistorySetting?.initRecords?.map((row) => {
+                        const { id, content } = row;
+                        return (
+                            <TableRow key={id}>
+                                <TableCell>{id}</TableCell>
+                                <TableCell>{content}</TableCell>
+                                <TableCell>
+                                    <Tooltip relationship="label" content={"edit"}>
+                                        <Button
+                                            size="small"
+                                            icon={<EditRegular />}
+                                            onClick={() => openEditDialog(row)}
+                                        />
+                                    </Tooltip>
+                                    <Tooltip relationship="label" content={"remove"}>
+                                        <Button
+                                            style={{ marginLeft: 4 }}
+                                            size="small"
+                                            icon={<DismissRegular />}
+                                            onClick={() => removeClipboardRecord(id as string)}
+                                        />
+                                    </Tooltip>
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
                 </TableBody>
             </Table>
         </div>

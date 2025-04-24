@@ -1,4 +1,5 @@
 import type { ClipboardItem } from "@common/Extensions/ClipBoardHistory";
+import { useForm } from "@Core/Hooks/useForm";
 import {
     Button,
     Dialog,
@@ -11,7 +12,7 @@ import {
     Field,
     Input,
 } from "@fluentui/react-components";
-import { useEffect, useState } from "react";
+import { Controller } from "react-hook-form";
 
 type CustomWebSearchDialogProps = {
     onSave: (row: ClipboardItem) => void;
@@ -28,20 +29,11 @@ export const ClipboardHistoryDialog = ({
     isDialogOpen,
     closeDialog,
 }: CustomWebSearchDialogProps) => {
-    const [temporaryCustomSearchEngineSetting, setTemporaryCustomSearchEngineSetting] = useState<
-        ClipboardItem | undefined
-    >(initialEngineSetting);
-    useEffect(() => {
-        if (isDialogOpen) {
-            setTemporaryCustomSearchEngineSetting(isAddDialog ? undefined : initialEngineSetting);
-        }
-    }, [initialEngineSetting, isDialogOpen, isAddDialog]);
-    const setContent = (content: string) => {
-        setTemporaryCustomSearchEngineSetting({ ...temporaryCustomSearchEngineSetting, content });
-    };
+    const { control, validateFields } = useForm<ClipboardItem>({ defaultValues: initialEngineSetting });
     const _closeDialog = () => {
         closeDialog();
     };
+
     return (
         <Dialog
             open={isDialogOpen}
@@ -58,12 +50,28 @@ export const ClipboardHistoryDialog = ({
                     <DialogTitle>{isAddDialog ? "Add" : "Edit"}</DialogTitle>
                     <DialogContent>
                         <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: 10 }}>
-                            <Field orientation="horizontal" required={true} label={"content"}>
-                                <Input
-                                    value={temporaryCustomSearchEngineSetting?.content}
-                                    onChange={(_, { value }) => setContent(value)}
+                            <form>
+                                <Controller
+                                    name="content"
+                                    control={control}
+                                    rules={{ required: "Content is required" }}
+                                    render={({ field, fieldState }) => {
+                                        return (
+                                            <Field
+                                                orientation="horizontal"
+                                                required
+                                                label={"content"}
+                                                className="mb-[12px]"
+                                            >
+                                                <Input {...field} />
+                                                {fieldState.error && (
+                                                    <span className="red">{fieldState.error.message}</span>
+                                                )}
+                                            </Field>
+                                        );
+                                    }}
                                 />
-                            </Field>
+                            </form>
                         </div>
                     </DialogContent>
                     <DialogActions>
@@ -73,16 +81,10 @@ export const ClipboardHistoryDialog = ({
                             </Button>
                         </DialogTrigger>
                         <Button
-                            onClick={() => {
-                                const content = (temporaryCustomSearchEngineSetting?.content || "").trim();
-
-                                if (!content) {
-                                    return;
-                                }
-
+                            onClick={async () => {
+                                const data = await validateFields();
                                 _closeDialog();
-
-                                onSave({ ...temporaryCustomSearchEngineSetting, content });
+                                onSave(data);
                             }}
                             appearance="primary"
                         >

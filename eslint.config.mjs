@@ -12,7 +12,7 @@ export default [
             curly: ["error"],
             "@typescript-eslint/no-unused-vars": ["error", { caughtErrors: "none" }],
             "@typescript-eslint/consistent-type-imports": "error",
-            "func-style": ["error", "expression"],
+            "func-style": "off",
 
             /**
              * Prevents empty constructors, e.g.: `constructor() {}`.
