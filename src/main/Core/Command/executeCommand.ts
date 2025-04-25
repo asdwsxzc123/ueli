@@ -1,0 +1,1 @@
+export const SLEEP_COMMAND = `powershell -NonInteractive -NoProfile -C "$m='[DllImport(\\"Powrprof.dll\\",SetLastError=true)]static extern bool SetSuspendState(bool hibernate,bool forceCritical,bool disableWakeEvent);public static void PowerSleep(){SetSuspendState(false,false,false); }';add-type -name Import -member $m -namespace Dll; [Dll.Import]::PowerSleep();`;

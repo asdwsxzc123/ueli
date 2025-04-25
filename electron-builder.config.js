@@ -42,7 +42,7 @@ const platformSpecificConfig = {
         // },
         win: {
             icon: "assets/Build/app-icon-dark-transparent.png",
-            target: [{ target: "msi" }, { target: "nsis" }, { target: "zip" }],
+            target: [{ target: "nsis" }],
         },
     },
     linux: {

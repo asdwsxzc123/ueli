@@ -5,9 +5,10 @@ import { SettingGroupList } from "@Core/Settings/SettingGroupList";
 import { Input, Switch, Tooltip } from "@fluentui/react-components";
 import { Info16Regular } from "@fluentui/react-icons";
 import { useTranslation } from "react-i18next";
+import { ExtensionTypeEnum } from "../../../types/Custom.type";
 
 export const VSCodeSettings = () => {
-    const extensionId = "VSCode";
+    const extensionId = ExtensionTypeEnum.VSCode;
 
     const { t } = useTranslation("extension[VSCode]");
 

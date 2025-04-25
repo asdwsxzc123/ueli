@@ -20,6 +20,14 @@ export class GlobalShortcutModule {
 
             globalShortcut.unregisterAll();
             globalShortcut.register(hotkey, () => eventEmitter.emitEvent("hotkeyPressed"));
+
+            // TODO: need setting hotkeys window
+            const copyHotkey = "Alt+Shift+C";
+            globalShortcut.register(copyHotkey, () => eventEmitter.emitEvent("copyHotkeyPressed"));
+            const vscodeHotkey = "Alt+Shift+V";
+            globalShortcut.register(vscodeHotkey, () => eventEmitter.emitEvent("vscodeHotkeyPressed"));
+            const sleepHotkey = "Alt+Ctrl+Q";
+            globalShortcut.register(sleepHotkey, () => eventEmitter.emitEvent("sleepHotkeyPressed"));
         };
 
         if (hotkeyIsEnabled()) {

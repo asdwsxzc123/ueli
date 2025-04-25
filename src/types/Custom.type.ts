@@ -5,4 +5,5 @@ export type ClipboardArgument = {
 
 export enum ExtensionTypeEnum {
     ClipboardHistory = "ClipboardHistory",
+    VSCode = "VSCode",
 }

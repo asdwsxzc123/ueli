@@ -1,4 +1,5 @@
 import type { AssetPathResolver } from "@Core/AssetPathResolver";
+import { SLEEP_COMMAND } from "@Core/Command";
 import type { CommandlineUtility } from "@Core/CommandlineUtility";
 import type { PowershellUtility } from "@Core/PowershellUtility";
 import type { Translator } from "@Core/Translator";
@@ -68,9 +69,7 @@ export class WindowsSystemCommandRepository implements SystemCommandRepository {
                 details: "Custom Powershell Script",
                 image: this.getImage({ fileName: "windows-11-system-command.png" }),
                 invoke: async () => {
-                    await this.commandlineUtility.executeCommand(
-                        `powershell -NonInteractive -NoProfile -C "$m='[DllImport(\\"Powrprof.dll\\",SetLastError=true)]static extern bool SetSuspendState(bool hibernate,bool forceCritical,bool disableWakeEvent);public static void PowerSleep(){SetSuspendState(false,false,false); }';add-type -name Import -member $m -namespace Dll; [Dll.Import]::PowerSleep();`,
-                    );
+                    await this.commandlineUtility.executeCommand(SLEEP_COMMAND);
                 },
                 requiresConfirmation: false,
             }),

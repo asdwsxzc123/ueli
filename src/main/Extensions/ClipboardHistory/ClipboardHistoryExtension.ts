@@ -33,6 +33,7 @@ export class ClipboardHistoryExtension implements Extension {
     private readonly MAX_RECORDS = 800;
     private readonly SQL_TABLE_NAME = "clipboard_history";
     private lastClipboardText = "";
+    private readonly settingKey = `extension[${ExtensionTypeEnum.ClipboardHistory}].clipBoardHistorySetting`;
     public readonly nameTranslation = {
         key: "extensionName",
         namespace: `extension[${this.id}]`,

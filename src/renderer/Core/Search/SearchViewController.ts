@@ -2,6 +2,7 @@ import { useSetting } from "@Core/Hooks";
 import { useStateRef } from "@Core/Hooks/useStateRef";
 import type { OperatingSystem, SearchResultItem, SearchResultItemAction } from "@common/Core";
 import type { SearchEngineId } from "@common/Core/Search";
+import type { IpcRendererEvent } from "electron";
 import { useEffect, useRef, useState } from "react";
 import { getActions, getNextSearchResultItemId, getPreviousSearchResultItemId } from "./Helpers";
 import { getSearchResult } from "./Helpers/getSearchResult";
@@ -65,9 +66,14 @@ export const useSearchViewController = ({
         const handler = () => {
             resetViewModal();
         };
+        const setViewModal = (_: IpcRendererEvent, { searchTerm }: { searchTerm: string }) => {
+            search(searchTerm);
+        };
         window.ContextBridge.ipcRenderer.on("clear-search-input", handler);
+        window.ContextBridge.ipcRenderer.on("set-search-input", setViewModal);
         return () => {
             window.ContextBridge.ipcRenderer.off("clear-search-input", handler);
+            window.ContextBridge.ipcRenderer.off("set-search-input", setViewModal);
         };
     }, []);
 

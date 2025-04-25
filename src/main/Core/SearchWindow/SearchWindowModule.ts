@@ -1,7 +1,9 @@
+import { SLEEP_COMMAND } from "@Core/Command";
 import type { UeliModuleRegistry } from "@Core/ModuleRegistry";
 import type { UeliCommandInvokedEvent } from "@Core/UeliCommand";
 import type { OperatingSystem, SearchResultItemAction } from "@common/Core";
 import { BrowserWindow } from "electron";
+import { ExtensionTypeEnum } from "../../../types/Custom.type";
 import type { BrowserWindowConstructorOptionsProvider } from "./BrowserWindowConstructorOptionsProvider";
 import {
     DefaultBrowserWindowConstructorOptionsProvider,
@@ -27,6 +29,8 @@ export class SearchWindowModule {
         const vibrancyProvider = moduleRegistry.get("BrowserWindowVibrancyProvider");
         const browserWindowRegistry = moduleRegistry.get("BrowserWindowRegistry");
         const ueliCommandInvoker = moduleRegistry.get("UeliCommandInvoker");
+        const extensionRegistry = moduleRegistry.get("ExtensionRegistry");
+        const commandlineUtility = moduleRegistry.get("CommandlineUtility");
 
         const defaultBrowserWindowOptions = new DefaultBrowserWindowConstructorOptionsProvider(
             app,
@@ -112,6 +116,25 @@ export class SearchWindowModule {
         });
 
         eventSubscriber.subscribe("hotkeyPressed", () => browserWindowToggler.toggle());
+
+        const sendSetSearchInput = (searchTerm: string) => {
+            browserWindowToggler.showAndFocus();
+            searchWindow.webContents.send("set-search-input", { searchTerm });
+        };
+
+        eventSubscriber.subscribe("copyHotkeyPressed", () => {
+            const value: any = extensionRegistry
+                .getById(ExtensionTypeEnum.ClipboardHistory)
+                .getSettingDefaultValue("clipBoardHistorySetting");
+            sendSetSearchInput(`${value?.prefix} `);
+        });
+        eventSubscriber.subscribe("vscodeHotkeyPressed", () => {
+            const prefix: any = extensionRegistry.getById(ExtensionTypeEnum.VSCode).getSettingDefaultValue("prefix");
+            sendSetSearchInput(`${prefix} `);
+        });
+        eventSubscriber.subscribe("sleepHotkeyPressed", () => {
+            commandlineUtility.executeCommand(SLEEP_COMMAND);
+        });
 
         eventSubscriber.subscribe("settingUpdated", ({ key, value }: { key: string; value: unknown }) => {
             searchWindow.webContents.send(`settingUpdated[${key}]`, { value });
