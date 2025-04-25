@@ -30,8 +30,7 @@ type ClipboardHistoryItem = {
 export class ClipboardHistoryExtension implements Extension {
     public readonly id = ExtensionTypeEnum.ClipboardHistory;
     public readonly name = "Clipboard History";
-    private readonly settingKey = `extension[${ExtensionTypeEnum.ClipboardHistory}].clipBoardHistorySetting`;
-    private readonly MAX_RECORDS = 1000;
+    private readonly MAX_RECORDS = 800;
     private readonly SQL_TABLE_NAME = "clipboard_history";
     private lastClipboardText = "";
     public readonly nameTranslation = {
@@ -46,7 +45,7 @@ export class ClipboardHistoryExtension implements Extension {
         return join(this.app.getPath("userData"), "app.db");
     };
 
-    private recentArr: ClipboardHistoryItem[] = [];
+    private recentArr: SearchResultItem[] = [];
 
     public constructor(
         private readonly operatingSystem: OperatingSystem,
@@ -155,7 +154,7 @@ export class ClipboardHistoryExtension implements Extension {
             return null;
         } finally {
             db.close();
-            this.recentArr = this.getClipboardHistory();
+            this.getClipboardHistory();
         }
     }
     private insertOrUpdateClipboardItem(id: string) {
@@ -177,22 +176,21 @@ export class ClipboardHistoryExtension implements Extension {
             return null;
         } finally {
             db.close();
-            this.recentArr = this.getClipboardHistory();
+            this.getClipboardHistory();
         }
     }
     public async getSearchResultItems(): Promise<SearchResultItem[]> {
-        const recentArr: ClipboardHistoryItem[] = [];
+        // const recentArr: ClipboardHistoryItem[] = [];
 
-        for (const recent of this.getClipboardHistory()) {
-            try {
-                recentArr.push(await this.getRecent(recent));
-            } catch (error) {
-                this.logger.error(this.id + ": " + error);
-            }
-        }
+        // for (const recent of this.getClipboardHistory()) {
+        //     try {
+        //         recentArr.push(await this.getRecent(recent));
+        //     } catch (error) {
+        //         this.logger.error(this.id + ": " + error);
+        //     }
+        // }
 
-        this.recentArr = recentArr;
-
+        this.getClipboardHistory();
         return [];
     }
     private getSearchResultItem(recent: ClipboardHistoryItem): SearchResultItem {
@@ -232,7 +230,7 @@ export class ClipboardHistoryExtension implements Extension {
 
         return recent.count > 99 ? "99+" : String(recent.count);
     }
-    public getClipboardHistory(): ClipboardHistoryItem[] {
+    public getClipboardHistory() {
         const values = this.getValue();
         const db = new Database(this.getAppDBPath());
 
@@ -248,21 +246,19 @@ export class ClipboardHistoryExtension implements Extension {
 
             const stmt = db.prepare(query);
             const list = stmt.all(...params) as ClipboardHistoryItem[];
-            return (values?.initRecords || ([] as any)).concat(list);
+            this.recentArr = (values?.initRecords || ([] as any))
+                .concat(list)
+                .map((recent: ClipboardHistoryItem) => this.getSearchResultItem(recent));
         } catch (error) {
             this.logger.error(`query db error: ${error}`);
-            return values?.initRecords || ([] as any);
+            this.recentArr = ((values?.initRecords as any) || []).map((recent: ClipboardHistoryItem) =>
+                this.getSearchResultItem(recent),
+            );
         } finally {
             db.close();
         }
     }
 
-    private async getRecent(recentRaw: ClipboardHistoryItem): Promise<ClipboardHistoryItem> {
-        return {
-            ...recentRaw,
-            // commandArg: '',
-        };
-    }
     public getImage(): Image {
         const path = this.assetPathResolver.getExtensionAssetPath(this.id, "index.png");
 
@@ -313,17 +309,17 @@ export class ClipboardHistoryExtension implements Extension {
     }
 
     private getFilterSearchResults(searchTerm: string): InstantSearchResultItems {
-        const searchResultItems: any = this.recentArr.map((recent) => this.getSearchResultItem(recent));
+        const searchResultItems = this.recentArr;
+        const maxSearchResultItems = this.settingsManager.getValue<number>("searchEngine.maxResultLength", 50);
 
         if (searchTerm === "") {
             return {
-                after: searchResultItems,
+                after: searchResultItems.slice(0, maxSearchResultItems),
                 before: [],
             };
         }
 
         const fuzziness = this.settingsManager.getValue<number>("searchEngine.fuzziness", 0.5);
-        const maxSearchResultItems = this.settingsManager.getValue<number>("searchEngine.maxResultLength", 50);
         const searchEngineId = this.settingsManager.getValue<SearchEngineId>("searchEngine.id", "fuzzysort");
         return {
             after: searchFilter(
