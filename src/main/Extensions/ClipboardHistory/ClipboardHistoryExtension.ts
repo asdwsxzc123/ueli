@@ -29,15 +29,15 @@ type ClipboardHistoryItem = {
 };
 export class ClipboardHistoryExtension implements Extension {
     public readonly id = ExtensionTypeEnum.ClipboardHistory;
-    private readonly settingKey = `extension[${ExtensionTypeEnum.ClipboardHistory}].clipBoardHistorySetting`;
     public readonly name = "Clipboard History";
+    private readonly settingKey = `extension[${ExtensionTypeEnum.ClipboardHistory}].clipBoardHistorySetting`;
     private readonly MAX_RECORDS = 1000;
     private readonly SQL_TABLE_NAME = "clipboard_history";
+    private lastClipboardText = "";
     public readonly nameTranslation = {
         key: "extensionName",
         namespace: `extension[${this.id}]`,
     };
-    private lastClipboardText = "";
     public readonly author = {
         name: "li ben",
         githubUserName: "asdwsxzc123",
