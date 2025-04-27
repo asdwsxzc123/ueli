@@ -129,35 +129,64 @@ export class ClipboardHistoryExtension implements Extension {
 
         try {
             db.transaction(() => {
-                // 插入记录并获取ID
-                const insert = db.prepare(`
-                    INSERT INTO ${this.SQL_TABLE_NAME} (content)
-                    VALUES (?)
-                `);
-                insert.run(text);
-                const total = db.prepare(`SELECT COUNT(*) FROM ${this.SQL_TABLE_NAME}`).pluck().get() as number;
+                const existingItem: any = db
+                    .prepare(
+                        `
+                    SELECT id FROM ${this.SQL_TABLE_NAME}
+                    WHERE content = ?
+                `,
+                    )
+                    .get(text);
 
-                if (total > this.MAX_RECORDS) {
+                if (existingItem) {
                     db.prepare(
                         `
-                    DELETE FROM ${this.SQL_TABLE_NAME}
-                    WHERE id IN (
-                        SELECT id FROM ${this.SQL_TABLE_NAME}
-                        ORDER BY count ASC, timestamp ASC
-                        LIMIT ?
-                    )
-                `,
-                    ).run(total - this.MAX_RECORDS);
+                        UPDATE ${this.SQL_TABLE_NAME}
+                        SET count = count + 1,
+                            timestamp = CURRENT_TIMESTAMP
+                        WHERE id = ?
+                    `,
+                    ).run(existingItem.id);
+                } else {
+                    db.prepare(
+                        `
+                        INSERT INTO ${this.SQL_TABLE_NAME} (content, count, timestamp)
+                        VALUES (?, 1, CURRENT_TIMESTAMP)
+                    `,
+                    ).run(text);
+
+                    const total = db
+                        .prepare(
+                            `
+                        SELECT COUNT(*) FROM ${this.SQL_TABLE_NAME}
+                    `,
+                        )
+                        .pluck()
+                        .get() as number;
+
+                    if (total > this.MAX_RECORDS) {
+                        db.prepare(
+                            `
+                            DELETE FROM ${this.SQL_TABLE_NAME}
+                            WHERE id IN (
+                                SELECT id FROM ${this.SQL_TABLE_NAME}
+                                ORDER BY timestamp ASC, count ASC
+                                LIMIT ?
+                            )
+                        `,
+                        ).run(total - this.MAX_RECORDS);
+                    }
                 }
             })();
         } catch (error) {
-            this.logger.error(`记录插入失败: ${error}`);
+            this.logger.error(`operator error: ${error}`);
             return null;
         } finally {
             db.close();
             this.getClipboardHistory();
         }
     }
+
     private insertOrUpdateClipboardItem(id: string) {
         const db = new Database(this.getAppDBPath());
 
@@ -173,7 +202,7 @@ export class ClipboardHistoryExtension implements Extension {
                 ).run(id);
             })();
         } catch (error) {
-            this.logger.error(`剪贴板记录更新失败: ${error}`);
+            this.logger.error(`update error: ${error}`);
             return null;
         } finally {
             db.close();
@@ -311,7 +340,7 @@ export class ClipboardHistoryExtension implements Extension {
 
     private getFilterSearchResults(searchTerm: string): InstantSearchResultItems {
         const searchResultItems = this.recentArr;
-        const maxSearchResultItems = this.settingsManager.getValue<number>("searchEngine.maxResultLength", 50);
+        const maxSearchResultItems = this.settingsManager.getValue<number>("searchEngine.maxResultLength", 100);
 
         if (searchTerm === "") {
             return {
