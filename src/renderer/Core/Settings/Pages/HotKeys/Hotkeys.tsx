@@ -1,9 +1,10 @@
-import type { ClipboardItem } from "@common/Extensions/ClipBoardHistory";
+import { isValidHotkey } from "@common/Core/Hotkey";
 import { useSetting } from "@Core/Hooks";
 import { SettingGroupList } from "@Core/Settings/SettingGroupList";
 import {
     Button,
     DialogTrigger,
+    Input,
     Label,
     Table,
     TableBody,
@@ -13,47 +14,31 @@ import {
     TableRow,
     Tooltip,
 } from "@fluentui/react-components";
-import { AddRegular, DismissRegular, EditRegular } from "@fluentui/react-icons";
+import { AddRegular, DismissRegular } from "@fluentui/react-icons";
 import { useState } from "react";
 import { SettingGroup } from "../../SettingGroup";
-import { HotkeyEditDialog } from "./HotkeyEditDialog";
+
+type HotKeyItem = {
+    id: string;
+    hotkey: string;
+    content: string;
+};
 export const Hotkeys = () => {
-    const { value } = useSetting({
+    const { value: hotKeys, updateValue: setHotKeys } = useSetting<HotKeyItem[]>({
         key: "hotkeys",
         defaultValue: [],
     });
-    console.log(`%c [Hotkeys.tsx]-[26]-[value]: `, "font-size:13px; background:#e6f7ff; color:#118aff;", value);
-
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [row, setRow] = useState<ClipboardItem>();
-    // const updateClipboardSetting = (field: Partial<ClipBoardHistorySetting>) => {
-    //     // updateValue()
-    // };
-    const updateClipboardRecord = () => {
-        // const initRecords = clipBoardHistorySetting?.initRecords || [];
-        // if (!row.id) {
-        //     row.id = `clipboard-sys-${Math.random().toString(36).slice(2)}`;
-        //     initRecords.push(row);
-        // } else {
-        //     const index = initRecords.findIndex((item) => item.id === row.id);
-        //     initRecords[index] = row;
-        // }
-        // setSearchHistory({ ...clipBoardHistorySetting, initRecords });
+    const [tempItem, setTempItem] = useState({ id: "", hotkey: "", content: "" });
+    const onAdd = () => {
+        setHotKeys([...hotKeys, { id: `hotkeys-sys-${Math.random().toString(36).slice(2)}`, content: "", hotkey: "" }]);
     };
 
-    const removeClipboardRecord = () => {
-        // const arr = initRecords.filter((item) => item.id !== id);
-        // setSearchHistory({ ...clipBoardHistorySetting, initRecords: arr });
+    const updateRecord = (oldId: string, updatedItem: HotKeyItem) => {
+        setHotKeys(hotKeys.map((item) => (item.id === oldId ? updatedItem : item)));
     };
 
-    const openEditDialog = (row?: ClipboardItem) => {
-        if (row === undefined) {
-            setRow(undefined);
-        } else {
-            setRow(row);
-        }
-
-        setIsDialogOpen(true);
+    const removeRecord = (id: string) => {
+        setHotKeys(hotKeys.filter((item) => item.id !== id));
     };
 
     return (
@@ -61,53 +46,75 @@ export const Hotkeys = () => {
             <SettingGroup title={"Hot keys"}>
                 <div>
                     <div className="flex justify-between mb-[12px]">
-                        <Label weight="semibold">Clipboard History</Label>
+                        <Label weight="semibold">Please first press shift or alt key</Label>
                         <div>
                             <DialogTrigger disableButtonEnhancement>
-                                <Button onClick={() => openEditDialog()} icon={<AddRegular />}>
-                                    Add Clipboard Record
+                                <Button onClick={() => onAdd()} icon={<AddRegular />}>
+                                    Add
                                 </Button>
                             </DialogTrigger>
-                            {isDialogOpen && (
-                                <HotkeyEditDialog
-                                    isAddDialog={!row?.id}
-                                    isDialogOpen={isDialogOpen}
-                                    closeDialog={() => setIsDialogOpen(false)}
-                                    onSave={updateClipboardRecord}
-                                    initialEngineSetting={row}
-                                />
-                            )}
                         </div>
                     </div>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHeaderCell style={{ width: 80 }}>{"Operator"}</TableHeaderCell>
-                                <TableHeaderCell style={{ width: 180 }}>{"Hot Key"}</TableHeaderCell>
+                                <TableHeaderCell style={{ width: 90 }}>{"Hot Key"}</TableHeaderCell>
+                                <TableHeaderCell style={{ width: 160 }}>{"cmd"}</TableHeaderCell>
                                 <TableHeaderCell style={{ width: 70 }}>{"Operator"}</TableHeaderCell>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {value?.map((row) => {
-                                const { id, content } = row;
+                            {hotKeys?.map((row) => {
+                                const { id, content, hotkey } = row;
                                 return (
                                     <TableRow key={id}>
-                                        <TableCell>{id}</TableCell>
-                                        <TableCell>{content}</TableCell>
                                         <TableCell>
-                                            <Tooltip relationship="label" content={"edit"}>
-                                                <Button
-                                                    size="small"
-                                                    icon={<EditRegular />}
-                                                    onClick={() => openEditDialog(row)}
-                                                />
-                                            </Tooltip>
+                                            <Input
+                                                value={tempItem.id === id ? tempItem.hotkey : hotkey}
+                                                onKeyUp={() => {
+                                                    if (isValidHotkey(tempItem.hotkey)) {
+                                                        updateRecord(id, tempItem);
+                                                    }
+
+                                                    setTempItem({ id: "", hotkey: "", content: "" });
+                                                }}
+                                                onKeyDown={(e) => {
+                                                    const key = e.key;
+
+                                                    if (!e.ctrlKey && !e.altKey) {
+                                                        return;
+                                                    }
+
+                                                    const hotkey = [
+                                                        e.ctrlKey ? "Ctrl" : undefined,
+                                                        e.shiftKey ? "Shift" : undefined,
+                                                        e.altKey ? "Alt" : undefined,
+                                                        ["Control", "Shift", "Alt"].includes(key)
+                                                            ? undefined
+                                                            : key.toUpperCase(),
+                                                    ]
+                                                        .filter(Boolean)
+                                                        .join("+");
+                                                    setTempItem({ ...row, hotkey });
+                                                }}
+                                                placeholder="Hot Key"
+                                                className="w-[180px]"
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Input
+                                                value={content}
+                                                onChange={(e) => updateRecord(id, { ...row, content: e.target.value })}
+                                                placeholder="Command"
+                                            />
+                                        </TableCell>
+                                        <TableCell>
                                             <Tooltip relationship="label" content={"remove"}>
                                                 <Button
                                                     style={{ marginLeft: 4 }}
                                                     size="small"
                                                     icon={<DismissRegular />}
-                                                    onClick={() => removeClipboardRecord(id as string)}
+                                                    onClick={() => removeRecord(id as string)}
                                                 />
                                             </Tooltip>
                                         </TableCell>

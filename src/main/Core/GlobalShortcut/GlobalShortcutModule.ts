@@ -13,6 +13,7 @@ export class GlobalShortcutModule {
 
         const registerHotkey = () => {
             const hotkey = settingsManager.getValue("general.hotkey", "Alt+Space");
+            const hotkeys = settingsManager.getValue("hotkeys", []);
 
             if (!isValidHotkey(hotkey)) {
                 logger.error(`Unable to register hotkey. Reason: unexpected hotkey ${hotkey}`);
@@ -21,13 +22,26 @@ export class GlobalShortcutModule {
             globalShortcut.unregisterAll();
             globalShortcut.register(hotkey, () => eventEmitter.emitEvent("hotkeyPressed"));
 
-            // TODO: need setting hotkeys window
-            const copyHotkey = "Alt+Shift+C";
-            globalShortcut.register(copyHotkey, () => eventEmitter.emitEvent("copyHotkeyPressed"));
-            const vscodeHotkey = "Alt+Shift+V";
-            globalShortcut.register(vscodeHotkey, () => eventEmitter.emitEvent("vscodeHotkeyPressed"));
-            const sleepHotkey = "Alt+Ctrl+Q";
-            globalShortcut.register(sleepHotkey, () => eventEmitter.emitEvent("sleepHotkeyPressed"));
+            hotkeys.forEach(({ hotkey, content }: { id: string; hotkey: string; content: string }) => {
+                {
+                    if (!hotkey) {
+                        return;
+                    }
+
+                    if (!isValidHotkey(hotkey)) {
+                        logger.error(`Unable to register hotkey. Reason: unexpected hotkey ${hotkey}`);
+                    } else {
+                        if (content.startsWith("/")) {
+                            // syCommandHotkeyPressed
+                            globalShortcut.register(hotkey, () =>
+                                eventEmitter.emitEvent("syCommandHotkeyPressed", content),
+                            );
+                        } else {
+                            globalShortcut.register(hotkey, () => eventEmitter.emitEvent("setSearchInput", content));
+                        }
+                    }
+                }
+            });
         };
 
         if (hotkeyIsEnabled()) {
