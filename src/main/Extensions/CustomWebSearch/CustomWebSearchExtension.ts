@@ -64,8 +64,8 @@ export class CustomWebSearchExtension implements Extension {
         }
 
         return {
-            after: selectedSearchEngines.map((engine) => this.createInstantSearchResultItem(engine, searchTerm)),
-            before: [],
+            before: selectedSearchEngines.map((engine) => this.createInstantSearchResultItem(engine, searchTerm)),
+            after: [],
         };
     }
 

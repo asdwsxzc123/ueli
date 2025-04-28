@@ -263,8 +263,8 @@ export class VSCodeExtension implements Extension {
 
         if (searchTerm === "") {
             return {
-                after: searchResultItems,
-                before: [],
+                before: searchResultItems,
+                after: [],
             };
         }
 
@@ -273,7 +273,7 @@ export class VSCodeExtension implements Extension {
         const searchEngineId = this.settingsManager.getValue<SearchEngineId>("searchEngine.id", "fuzzysort");
 
         return {
-            after: searchFilter(
+            before: searchFilter(
                 {
                     searchResultItems,
                     searchTerm,
@@ -282,7 +282,7 @@ export class VSCodeExtension implements Extension {
                 },
                 searchEngineId,
             ),
-            before: [],
+            after: [],
         };
     }
 
