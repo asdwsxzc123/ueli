@@ -1,12 +1,12 @@
 {
   "name": "ueli",
   "description": "Cross-Platform Keystroke Launcher",
-  "version": "9.21.2",
+  "version": "9.22.0",
   "license": "MIT",
   "author": {
-    "email": "oliver.schwendener@proton.me",
-    "name": "Oliver Schwendener",
-    "url": "https://github.com/oliverschwendener"
+    "email": "sbfgeyyo@126.com",
+    "name": "Li Ben",
+    "url": "https://github.com/asdwsxzc123"
   },
   "main": "dist-main/index.js",
   "scripts": {
