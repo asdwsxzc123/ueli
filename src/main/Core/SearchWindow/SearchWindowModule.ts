@@ -1,7 +1,8 @@
 import type { UeliModuleRegistry } from "@Core/ModuleRegistry";
 import type { UeliCommandInvokedEvent } from "@Core/UeliCommand";
-import type { OperatingSystem, SearchResultItemAction } from "@common/Core";
+import type { OperatingSystem, SearchResultItem, SearchResultItemAction } from "@common/Core";
 import { BrowserWindow } from "electron";
+import type { SystemCommand } from "../../Extensions/SystemCommands/SystemCommand";
 import type { BrowserWindowConstructorOptionsProvider } from "./BrowserWindowConstructorOptionsProvider";
 import {
     DefaultBrowserWindowConstructorOptionsProvider,
@@ -19,6 +20,7 @@ export class SearchWindowModule {
         const appIconFilePathResolver = moduleRegistry.get("BrowserWindowAppIconFilePathResolver");
         const backgroundMaterialProvider = moduleRegistry.get("BrowserWindowBackgroundMaterialProvider");
         const eventSubscriber = moduleRegistry.get("EventSubscriber");
+        const eventEmitter = moduleRegistry.get("EventEmitter");
         const htmlLoader = moduleRegistry.get("BrowserWindowHtmlLoader");
         const ipcMain = moduleRegistry.get("IpcMain");
         const nativeTheme = moduleRegistry.get("NativeTheme");
@@ -27,6 +29,16 @@ export class SearchWindowModule {
         const vibrancyProvider = moduleRegistry.get("BrowserWindowVibrancyProvider");
         const browserWindowRegistry = moduleRegistry.get("BrowserWindowRegistry");
         const ueliCommandInvoker = moduleRegistry.get("UeliCommandInvoker");
+        const extensionRegistry = moduleRegistry.get("ExtensionRegistry");
+        const systemCommands: any = extensionRegistry.getAll().find((extension) => extension.id === "SystemCommands");
+        const systemCommandMap = ((await systemCommands.systemCommandRepository.getAll()) as SystemCommand[]).reduce(
+            (total, cur) => {
+                const item = cur.toSearchResultItem();
+                total[item.name] = item;
+                return total;
+            },
+            {} as Record<string, SearchResultItem>,
+        );
 
         const defaultBrowserWindowOptions = new DefaultBrowserWindowConstructorOptionsProvider(
             app,
@@ -112,6 +124,23 @@ export class SearchWindowModule {
         });
 
         eventSubscriber.subscribe("hotkeyPressed", () => browserWindowToggler.toggle());
+
+        const sendSetSearchInput = (searchTerm: string) => {
+            browserWindowToggler.showAndFocus();
+            searchWindow.webContents.send("set-search-input", { searchTerm });
+        };
+
+        eventSubscriber.subscribe("setSearchInput", (searchTerm: string) => {
+            sendSetSearchInput(searchTerm);
+        });
+        eventSubscriber.subscribe("syCommandHotkeyPressed", (content: string) => {
+            const systemCommandName = content.split("/")[1];
+
+            if (systemCommandMap[systemCommandName]) {
+                const systemCommand = systemCommandMap[systemCommandName];
+                eventEmitter.emitEvent("invokeAction", { action: systemCommand.defaultAction });
+            }
+        });
 
         eventSubscriber.subscribe("settingUpdated", ({ key, value }: { key: string; value: unknown }) => {
             searchWindow.webContents.send(`settingUpdated[${key}]`, { value });

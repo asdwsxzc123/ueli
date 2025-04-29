@@ -29,15 +29,15 @@ type ClipboardHistoryItem = {
 };
 export class ClipboardHistoryExtension implements Extension {
     public readonly id = ExtensionTypeEnum.ClipboardHistory;
-    private readonly settingKey = `extension[${ExtensionTypeEnum.ClipboardHistory}].clipBoardHistorySetting`;
     public readonly name = "Clipboard History";
     private readonly MAX_RECORDS = 800;
     private readonly SQL_TABLE_NAME = "clipboard_history";
+    private lastClipboardText = "";
+    private readonly settingKey = `extension[${ExtensionTypeEnum.ClipboardHistory}].clipBoardHistorySetting`;
     public readonly nameTranslation = {
         key: "extensionName",
         namespace: `extension[${this.id}]`,
     };
-    private lastClipboardText = "";
     public readonly author = {
         name: "li ben",
         githubUserName: "asdwsxzc123",
@@ -330,11 +330,14 @@ export class ClipboardHistoryExtension implements Extension {
     }
 
     public getInstantSearchResultItems(searchTerm: string): InstantSearchResultItems {
-        if (this.getPrefix().trim() !== "" && !searchTerm.startsWith(this.getPrefix() + " ")) {
+        // 只要基于prefix的前缀存在,就显示
+        const prefix = this.getPrefix();
+
+        if (prefix.trim() !== "" && !searchTerm.startsWith(prefix + " ")) {
             return createEmptyInstantSearchResult();
         }
 
-        searchTerm = searchTerm.replace(this.getPrefix() + " ", "").trim();
+        searchTerm = searchTerm.replace(prefix + " ", "").trim();
         return this.getFilterSearchResults(searchTerm);
     }
 
@@ -344,15 +347,15 @@ export class ClipboardHistoryExtension implements Extension {
 
         if (searchTerm === "") {
             return {
-                after: searchResultItems.slice(0, maxSearchResultItems),
-                before: [],
+                before: searchResultItems.slice(0, maxSearchResultItems),
+                after: [],
             };
         }
 
         const fuzziness = this.settingsManager.getValue<number>("searchEngine.fuzziness", 0.5);
         const searchEngineId = this.settingsManager.getValue<SearchEngineId>("searchEngine.id", "fuzzysort");
         return {
-            after: searchFilter(
+            before: searchFilter(
                 {
                     searchResultItems,
                     searchTerm,
@@ -361,7 +364,7 @@ export class ClipboardHistoryExtension implements Extension {
                 },
                 searchEngineId,
             ),
-            before: [],
+            after: [],
         };
     }
 

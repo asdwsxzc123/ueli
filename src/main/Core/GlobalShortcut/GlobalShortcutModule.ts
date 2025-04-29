@@ -13,6 +13,7 @@ export class GlobalShortcutModule {
 
         const registerHotkey = () => {
             const hotkey = settingsManager.getValue("general.hotkey", "Alt+Space");
+            const hotkeys = settingsManager.getValue("hotkeys", []);
 
             if (!isValidHotkey(hotkey)) {
                 logger.error(`Unable to register hotkey. Reason: unexpected hotkey ${hotkey}`);
@@ -20,6 +21,27 @@ export class GlobalShortcutModule {
 
             globalShortcut.unregisterAll();
             globalShortcut.register(hotkey, () => eventEmitter.emitEvent("hotkeyPressed"));
+
+            hotkeys.forEach(({ hotkey, content }: { id: string; hotkey: string; content: string }) => {
+                {
+                    if (!hotkey) {
+                        return;
+                    }
+
+                    if (!isValidHotkey(hotkey)) {
+                        logger.error(`Unable to register hotkey. Reason: unexpected hotkey ${hotkey}`);
+                    } else {
+                        if (content.startsWith("/")) {
+                            // syCommandHotkeyPressed
+                            globalShortcut.register(hotkey, () =>
+                                eventEmitter.emitEvent("syCommandHotkeyPressed", content),
+                            );
+                        } else {
+                            globalShortcut.register(hotkey, () => eventEmitter.emitEvent("setSearchInput", content));
+                        }
+                    }
+                }
+            });
         };
 
         if (hotkeyIsEnabled()) {

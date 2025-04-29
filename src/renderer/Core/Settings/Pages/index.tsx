@@ -16,6 +16,7 @@ import { Debug } from "./Debug";
 import { Extensions } from "./Extensions";
 import { Favorites } from "./Favorites";
 import { General } from "./General";
+import { Hotkeys } from "./HotKeys";
 import { KeyboardAndMouse } from "./KeyboardAndMouse";
 import { SearchEngine } from "./SearchEngine";
 import { Window } from "./Window";
@@ -70,6 +71,13 @@ export const settingsPages: SettingsPage[] = [
         absolutePath: "/favorites",
         element: <Favorites />,
         icon: <Star20Regular />,
+    },
+    {
+        translation: { key: "Hot Keys", namespace: "settingsHotKeys" },
+        relativePath: "settingsHotKeys",
+        absolutePath: "/settingsHotKeys",
+        element: <Hotkeys />,
+        icon: <Keyboard20Regular />,
     },
     {
         translation: { key: "title", namespace: "settingsExtensions" },

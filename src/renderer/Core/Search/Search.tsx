@@ -115,6 +115,8 @@ export const Search = ({
                     return {
                         shouldInvokeAction: searchResultItemAction !== undefined,
                         action: () => {
+                            searchHistory.add(searchTerm.value);
+
                             if (searchResultItemAction !== undefined) {
                                 invokeAction(searchResultItemAction);
                             }

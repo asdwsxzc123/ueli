@@ -28,9 +28,6 @@ export const ImportExport = () => {
             await window.ContextBridge.exportSettings(filePath);
         }
     };
-    const openSettingsFile = async () => {
-        await window.ContextBridge.openSettingsFile();
-    };
     return (
         <div>
             <Setting
@@ -42,16 +39,6 @@ export const ImportExport = () => {
                         </Button>
                         <Button onClick={() => exportSettings()} icon={<ArrowExportRegular />}>
                             {t("exportSettings")}
-                        </Button>
-                    </div>
-                }
-            />
-            <Setting
-                label={"Settings File"}
-                control={
-                    <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
-                        <Button onClick={() => openSettingsFile()} icon={<ArrowExportRegular />}>
-                            Open
                         </Button>
                     </div>
                 }
