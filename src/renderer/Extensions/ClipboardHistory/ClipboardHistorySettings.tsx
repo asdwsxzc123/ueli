@@ -101,7 +101,7 @@ export const ClipboardHistorySettings = () => {
                     <TableRow>
                         <TableHeaderCell style={{ width: 80 }}>{"id"}</TableHeaderCell>
                         <TableHeaderCell style={{ width: 180 }}>{"Content"}</TableHeaderCell>
-                        <TableHeaderCell style={{ width: 180 }}>{"Sort"}</TableHeaderCell>
+                        <TableHeaderCell style={{ width: 20 }}>{"Sort"}</TableHeaderCell>
                         <TableHeaderCell style={{ width: 70 }}>{"Operator"}</TableHeaderCell>
                     </TableRow>
                 </TableHeader>
