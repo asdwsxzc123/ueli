@@ -33,7 +33,7 @@ export const ClipboardHistorySettings = () => {
         setCustomSearchEngineSettings({ ...clipBoardHistorySetting, ...field });
     };
     const updateClipboardRecord = (row: ClipboardItem) => {
-        const initRecords = clipBoardHistorySetting?.initRecords || [];
+        let initRecords = clipBoardHistorySetting?.initRecords || [];
 
         if (!row.id) {
             row.id = `clipboard-sys-${Math.random().toString(36).slice(2)}`;
@@ -43,6 +43,9 @@ export const ClipboardHistorySettings = () => {
             initRecords[index] = row;
         }
 
+        initRecords = initRecords.sort((a, b) => {
+            return (a.sort || 0) - (b.sort || 0);
+        });
         setCustomSearchEngineSettings({ ...clipBoardHistorySetting, initRecords });
     };
 
@@ -98,16 +101,18 @@ export const ClipboardHistorySettings = () => {
                     <TableRow>
                         <TableHeaderCell style={{ width: 80 }}>{"id"}</TableHeaderCell>
                         <TableHeaderCell style={{ width: 180 }}>{"Content"}</TableHeaderCell>
+                        <TableHeaderCell style={{ width: 180 }}>{"Sort"}</TableHeaderCell>
                         <TableHeaderCell style={{ width: 70 }}>{"Operator"}</TableHeaderCell>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {clipBoardHistorySetting?.initRecords?.map((row) => {
-                        const { id, content } = row;
+                        const { id, content, sort } = row;
                         return (
                             <TableRow key={id}>
                                 <TableCell>{id}</TableCell>
                                 <TableCell>{content}</TableCell>
+                                <TableCell>{sort || 0}</TableCell>
                                 <TableCell>
                                     <Tooltip relationship="label" content={"edit"}>
                                         <Button

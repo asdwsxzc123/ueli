@@ -104,6 +104,7 @@ export class ClipboardHistoryExtension implements Extension {
                             id: `clipboard-sys-${Math.random().toString(36).slice(2)}`,
                             content: copyText,
                         });
+
                         this.settingsManager.updateValue(this.settingKey, { ...setting, initRecords });
                         this.getClipboardHistory();
                     }

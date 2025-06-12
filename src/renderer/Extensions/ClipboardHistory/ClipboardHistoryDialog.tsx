@@ -71,6 +71,20 @@ export const ClipboardHistoryDialog = ({
                                         );
                                     }}
                                 />
+                                <Controller
+                                    name="sort"
+                                    control={control}
+                                    render={({ field, fieldState }) => {
+                                        return (
+                                            <Field orientation="horizontal" label={"sort"} className="mb-[12px]">
+                                                <Input type="number" {...(field as any)} />
+                                                {fieldState.error && (
+                                                    <span className="red">{fieldState.error.message}</span>
+                                                )}
+                                            </Field>
+                                        );
+                                    }}
+                                />
                             </form>
                         </div>
                     </DialogContent>
